@@ -2,7 +2,16 @@
 #include<stdio.h>
 #include<string.h>
 #include<stdlib.h>
-
+/*
+0. 유저 인터페이스 구현
+1. 신규 고객 등록
+2. 고객조회
+3. 신규 비디오 등록
+4. 비디오 조회
+5. 비디오 대여
+6. 비디오 반납
+7. 비디오 연체 처리
+*/
 typedef struct _customer {
 	int id; //고객번호
 	char name[20]; //고객이름
@@ -35,6 +44,7 @@ typedef struct _rent_info {
 
 void input_customer();
 void input_video();
+void new_customer();
 
 CUSTOMER customer_info[200];
 int c_idx = 0; //고객정보 저장된 개수
@@ -44,10 +54,32 @@ int v_idx = 0; //비디오정보 저장된 개수
 
 int main()
 {
-	int i;
+	int i, sel = 1;
 
 	input_customer(); //고객정보 입력
 	input_video(); //비디오정보 입력
+
+	while(sel!=0)
+	{
+		system("cls");
+		printf("<비디오 대여관리 프로그램>\n");
+		printf("1. 신규 고객 등록\n");
+		printf("2. 고객 정보 조회\n");
+		printf("3. 신규 비디오 등록\n");
+		printf("4. 비디오 정보 조회\n");
+		printf("0. 종료\n");
+		printf("---------------------\n");
+		printf("항목을 선택하세요 : ");
+		scanf("%d", &sel);
+
+		switch (sel)
+		{
+		case 1:
+			new_customer();
+			break;
+		}
+	}
+	
 
 	for (i = 0; i < c_idx; i++)
 	{
@@ -72,6 +104,34 @@ int main()
 	}
 
 	return 0;
+}
+
+//신규 고객정보를 입력받아서 파일에 저장
+void new_customer()
+{
+	FILE *c_fp = fopen("customer_info.txt", "a");
+
+	//구조체 배열에 고객 정보를 입력 받음
+	printf("고객번호 : ");
+	scanf("%d", &customer_info[c_idx].id);
+	printf("고객이름 : ");
+	scanf("%s", &customer_info[c_idx].name);
+	printf("주민등록번호 : ");
+	scanf("%s", &customer_info[c_idx].ssn);
+	printf("전화번호 : ");
+	scanf("%s", &customer_info[c_idx].phone);
+	printf("주소 : ");
+	scanf("%s", &customer_info[c_idx].address);
+
+	fprintf(c_fp, "\n%d, %s, %s, %s, %s"
+		, customer_info[c_idx].id
+		, customer_info[c_idx].name
+		, customer_info[c_idx].ssn
+		, customer_info[c_idx].phone
+		, customer_info[c_idx].address);
+
+	c_idx++;
+	fclose(c_fp);
 }
 
 //고객정보를 파일에서 입력받는다.

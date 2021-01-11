@@ -51,7 +51,6 @@ int c_idx = 0; //고객정보 저장된 개수
 VIDEO video_info[200];
 int v_idx = 0; //비디오정보 저장된 개수
 
-
 int main()
 {
 	int i, sel = 1;
@@ -80,7 +79,6 @@ int main()
 		}
 	}
 	
-
 	for (i = 0; i < c_idx; i++)
 	{
 		printf("%d, %s, %s, %s, %s\n"
@@ -102,7 +100,6 @@ int main()
 			, video_info[i].is_rented
 			, video_info[i].late_fee);			
 	}
-
 	return 0;
 }
 

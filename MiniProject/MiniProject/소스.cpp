@@ -2,6 +2,7 @@
 #include<stdio.h>
 #include<string.h>
 #include<stdlib.h>
+#include<conio.h>
 /*
 0. 유저 인터페이스 구현
 1. 신규 고객 등록
@@ -45,6 +46,9 @@ typedef struct _rent_info {
 void input_customer();
 void input_video();
 void new_customer();
+int search_customer();
+void new_video();
+int search_video();
 
 CUSTOMER customer_info[200];
 int c_idx = 0; //고객정보 저장된 개수
@@ -53,7 +57,7 @@ int v_idx = 0; //비디오정보 저장된 개수
 
 int main()
 {
-	int i, sel = 1;
+	int i, idx, sel = 1;
 
 	input_customer(); //고객정보 입력
 	input_video(); //비디오정보 입력
@@ -64,8 +68,10 @@ int main()
 		printf("<비디오 대여관리 프로그램>\n");
 		printf("1. 신규 고객 등록\n");
 		printf("2. 고객 정보 조회\n");
-		printf("3. 신규 비디오 등록\n");
-		printf("4. 비디오 정보 조회\n");
+		printf("3. 전체 고객 정보 조회\n");
+		printf("4. 신규 비디오 등록\n");
+		printf("5. 비디오 정보 조회\n");
+		printf("6. 전체 비디오 정보 조회\n");
 		printf("0. 종료\n");
 		printf("---------------------\n");
 		printf("항목을 선택하세요 : ");
@@ -76,7 +82,74 @@ int main()
 		case 1:
 			new_customer();
 			break;
+
+		case 2:
+			idx = search_customer();
+			if (idx == -1)
+			{
+				printf("일치하는 고객이 없습니다.\n");
+			}		
+			else
+			{
+				printf("%d, %s, %s, %s, %s\n"
+					, customer_info[idx].id
+					, customer_info[idx].name
+					, customer_info[idx].ssn
+					, customer_info[idx].phone
+					, customer_info[idx].address);
+			}
+			break;
+
+		case 3:
+			for (i = 0; i < c_idx; i++)
+			{
+				printf("%d, %s, %s, %s, %s\n"
+					, customer_info[i].id
+					, customer_info[i].name
+					, customer_info[i].ssn
+					, customer_info[i].phone
+					, customer_info[i].address);
+			}
+			break;
+
+		case 4:
+			new_video();
+			break;
+
+		case 5:
+			idx = search_video();
+			if (idx == -1)
+			{
+				printf("일치하는 비디오가 없습니다.\n");
+			}
+			else
+			{
+				printf("%d, %s, %s, %d, %s, %d, %d\n"
+					, video_info[idx].id
+					, video_info[idx].title
+					, video_info[idx].genre
+					, video_info[idx].charge
+					, video_info[idx].regist_date
+					, video_info[idx].is_rented
+					, video_info[idx].late_fee);
+			}
+			break;
+
+		case 6:
+			for (i = 0; i < v_idx; i++)
+			{
+				printf("%d, %s, %s, %d, %s, %d, %d\n"
+					, video_info[i].id
+					, video_info[i].title
+					, video_info[i].genre
+					, video_info[i].charge
+					, video_info[i].regist_date
+					, video_info[i].is_rented
+					, video_info[i].late_fee);
+			}
+			break;
 		}
+		_getch();
 	}
 	
 	for (i = 0; i < c_idx; i++)
@@ -101,6 +174,71 @@ int main()
 			, video_info[i].late_fee);			
 	}
 	return 0;
+}
+
+//비디오 제목 검색으로 고객정보를 찾음
+int search_video()
+{
+	int i;
+	char title[30];
+	printf("제목: ");
+	scanf("%s", &title);
+
+	for (i = 0; i < c_idx; i++)
+	{
+		if (strcmp(title, video_info[i].title) == 0)
+			return i;
+	}
+	return -1;
+}
+
+//신규 비디오정보를 입력받아서 파일에 저장
+void new_video()
+{
+	FILE *v_fp = fopen("video_info.txt", "a");
+
+	//구조체 배열에 고객 정보를 입력 받음
+	printf("비디오 번호 : ");
+	scanf("%d", &video_info[v_idx].id);
+	printf("비디오 제목 : ");
+	scanf("%s", &video_info[v_idx].title);
+	printf("장르 : ");
+	scanf("%s", &video_info[v_idx].genre);
+	printf("대여료 : ");
+	scanf("%d", &video_info[v_idx].charge);
+	printf("등록일자 : ");
+	scanf("%s", &video_info[v_idx].regist_date);
+	video_info[v_idx].is_rented = 0; //디폴트(대여중이 아님, 신규등록이라 매장안에 존재함)
+	printf("연체료 : ");
+	scanf("%d", &video_info[v_idx].late_fee);
+
+	fprintf(v_fp, "\n%d, %s, %s, %d, %s, %d, %d"
+		, video_info[v_idx].id
+		, video_info[v_idx].title
+		, video_info[v_idx].genre
+		, video_info[v_idx].charge
+		, video_info[v_idx].regist_date
+		, video_info[v_idx].is_rented
+		, video_info[v_idx].late_fee);
+
+	v_idx++;
+	fclose(v_fp);
+}
+
+//전화번호 검색으로 고객정보를 찾음
+int search_customer()
+{
+	int i;
+	char phone[30];
+	printf("전화번호: ");
+	scanf("%s", &phone);
+
+	for (i = 0; i < c_idx; i++)
+	{
+		if (strcmp(phone, customer_info[i].phone) == 0)
+			return i;			
+	}
+	return -1;
 }
 
 //신규 고객정보를 입력받아서 파일에 저장

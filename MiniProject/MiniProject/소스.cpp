@@ -3,6 +3,7 @@
 #include<string.h>
 #include<stdlib.h>
 #include<conio.h>
+#include<time.h>
 /*
 0. 유저 인터페이스 구현
 1. 신규 고객 등록
@@ -49,11 +50,14 @@ void new_customer();
 int search_customer();
 void new_video();
 int search_video();
+void rent_video();
 
 CUSTOMER customer_info[200];
 int c_idx = 0; //고객정보 저장된 개수
 VIDEO video_info[200];
 int v_idx = 0; //비디오정보 저장된 개수
+RENT_INFO rent; //한개의 비디오만 대여/반납
+int rent_id = 1; //대여번호
 
 int main()
 {
@@ -72,6 +76,8 @@ int main()
 		printf("4. 신규 비디오 등록\n");
 		printf("5. 비디오 정보 조회\n");
 		printf("6. 전체 비디오 정보 조회\n");
+		printf("7. 대여\n");
+		printf("8. 반납\n");
 		printf("0. 종료\n");
 		printf("---------------------\n");
 		printf("항목을 선택하세요 : ");
@@ -148,6 +154,13 @@ int main()
 					, video_info[i].late_fee);
 			}
 			break;
+
+		case 7:
+			rent_video();
+			break;
+			
+		case 8:
+			break;
 		}
 		_getch();
 	}
@@ -174,6 +187,61 @@ int main()
 			, video_info[i].late_fee);			
 	}
 	return 0;
+}
+
+void rent_video()
+{
+	int i, video_id, cust_id;
+	time_t timer;
+	struct tm *t;
+
+	for (i = 0; i < v_idx; i++)
+	{
+		if (video_info[i].is_rented == 0)
+			printf("%d, %s, %s, %d, %s, %d, %d\n"
+				, video_info[i].id
+				, video_info[i].title
+				, video_info[i].genre
+				, video_info[i].charge
+				, video_info[i].regist_date
+				, video_info[i].is_rented
+				, video_info[i].late_fee);
+	}
+	printf("대여할 비디오 번호를 입력하세요: ");
+	scanf("%d", &video_id);
+	video_info[video_id-1].is_rented == 1; //대여 표시
+
+	for (i = 0; i < c_idx; i++)
+	{
+		printf("%d, %s, %s, %s, %s\n"
+			, customer_info[i].id
+			, customer_info[i].name
+			, customer_info[i].ssn
+			, customer_info[i].phone
+			, customer_info[i].address);
+	}
+	printf("고객 번호를 입력하세요: ");
+	scanf("%d", &cust_id);
+
+	rent.id = rent_id++; //대여id
+	rent.video_id = video_info[video_id-1].id; //현재 빌려갈 비디오 번호
+	rent.cust_id = cust_id; //고객번호
+	rent.rent_date = timer = time(NULL); //대여일자(현재 시점으로 초로 환산하여 정수로 나타냄)
+	rent.ret_due_date; //반납 예정일자
+	//rent.ret_date; //반납 일자
+	rent.is_returned = 0; //1.반납완료, 0.대여중
+	//rent.total_late_fee = 0; //총 연체료
+	rent.charge = video_info[video_id-1].charge; //대여료
+
+	t = localtime(&timer); //시간단위 함수
+
+	printf("%d %d %d %d-%d-%d %d %d\n"
+		, rent.id
+		, rent.video_id
+		, rent.cust_id
+		, t->tm_year + 1900, t->tm_mon + 1, t->tm_mday
+		, rent.is_returned
+		, rent.charge);
 }
 
 //비디오 제목 검색으로 고객정보를 찾음

@@ -51,6 +51,7 @@ int search_customer();
 void new_video();
 int search_video();
 void rent_video();
+void return_video();
 
 CUSTOMER customer_info[200];
 int c_idx = 0; //고객정보 저장된 개수
@@ -160,7 +161,10 @@ int main()
 			break;
 			
 		case 8:
+			return_video();
 			break;
+		case 0:
+			exit(1);
 		}
 		_getch();
 	}
@@ -189,6 +193,31 @@ int main()
 	return 0;
 }
 
+//비디오 반납
+void return_video()
+{
+	time_t timer;
+	struct tm * t;
+	int ret_sec;
+	int late_pay, late_day;
+
+	video_info[rent.video_id - 1].is_rented = 0;  //반납 표시
+
+	rent.video_id;  //비디오 번호
+	rent.ret_date = timer = time(NULL);  //반납 일자
+	rent.is_returned = 1; //1: 반납 완료, 0: 대여중
+
+	if (rent.ret_date > rent.ret_due_date)  //반납 예정일을 넘긴 경우
+	{
+		ret_sec = rent.ret_date - rent.ret_due_date;
+		late_day = ((ret_sec / 86400) + 1);  //일 단위로 계산
+		late_pay = late_day * video_info[rent.video_id - 1].late_fee;  //연체료 계산
+		printf("%d일 연체되었습니다. 연체료는 %d입니다.\n", late_day, late_pay);
+	}
+	printf("비디오 반납이 완료되었습니다.\n");
+}
+
+//비디오 대여
 void rent_video()
 {
 	int i, video_id, cust_id;
@@ -209,7 +238,7 @@ void rent_video()
 	}
 	printf("대여할 비디오 번호를 입력하세요: ");
 	scanf("%d", &video_id);
-	video_info[video_id-1].is_rented == 1; //대여 표시
+	video_info[video_id-1].is_rented = 1; //대여 표시
 
 	for (i = 0; i < c_idx; i++)
 	{
@@ -220,17 +249,17 @@ void rent_video()
 			, customer_info[i].phone
 			, customer_info[i].address);
 	}
+
 	printf("고객 번호를 입력하세요: ");
 	scanf("%d", &cust_id);
 
 	rent.id = rent_id++; //대여id
 	rent.video_id = video_info[video_id-1].id; //현재 빌려갈 비디오 번호
 	rent.cust_id = cust_id; //고객번호
-	rent.rent_date = timer = time(NULL); //대여일자(현재 시점으로 초로 환산하여 정수로 나타냄)
-	rent.ret_due_date; //반납 예정일자
-	//rent.ret_date; //반납 일자
+	//rent.rent_date = timer = time(NULL); //대여일자(현재 시점으로 초로 환산하여 정수로 나타냄)
+	rent.rent_date = timer = time(NULL) - 691200; //대여일자(테스트를 위해 8일전으로 시간을 조작함)
+	rent.ret_due_date = timer + 604800; //반납 예정일자
 	rent.is_returned = 0; //1.반납완료, 0.대여중
-	//rent.total_late_fee = 0; //총 연체료
 	rent.charge = video_info[video_id-1].charge; //대여료
 
 	t = localtime(&timer); //시간단위 함수

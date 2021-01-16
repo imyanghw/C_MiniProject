@@ -70,18 +70,19 @@ int main(void)
 	while(sel!=0)
 	{
 		system("cls");
-		printf("<비디오 대여관리 프로그램>\n");
-		printf("1. 신규 고객 등록\n");
-		printf("2. 고객 정보 조회\n");
-		printf("3. 전체 고객 정보 조회\n");
-		printf("4. 신규 비디오 등록\n");
-		printf("5. 비디오 정보 조회\n");
-		printf("6. 전체 비디오 정보 조회\n");
-		printf("7. 대여\n");
-		printf("8. 반납\n");
-		printf("0. 종료\n");
-		printf("---------------------\n");
-		printf("항목을 선택하세요 : ");
+		printf("┏━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n");
+		printf("┃<비디오 대여관리 프로그램>┃\n");
+		printf("┃1. 신규 고객 등록         ┃\n");
+		printf("┃2. 고객 정보 조회         ┃\n");
+		printf("┃3. 전체 고객 정보 조회    ┃\n");
+		printf("┃4. 신규 비디오 등록       ┃\n");
+		printf("┃5. 비디오 정보 조회       ┃\n");
+		printf("┃6. 전체 비디오 정보 조회  ┃\n");
+		printf("┃7. 대여                   ┃\n");
+		printf("┃8. 반납                   ┃\n");
+		printf("┃0. 종료                   ┃\n");
+		printf("┗━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n");
+		printf("▶항목을 선택하세요 : ");
 		scanf("%d", &sel);
 
 		switch (sel)

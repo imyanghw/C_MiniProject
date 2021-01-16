@@ -60,9 +60,9 @@ int v_idx = 0; //비디오정보 저장된 개수
 RENT_INFO rent; //한개의 비디오만 대여/반납
 int rent_id = 1; //대여번호
 
-int main()
+int main(void)
 {
-	int i, idx, sel = 1;
+	int i, sel = 1, idx;
 
 	input_customer(); //고객정보 입력
 	input_video(); //비디오정보 입력
@@ -87,10 +87,12 @@ int main()
 		switch (sel)
 		{
 		case 1:
+			system("cls");
 			new_customer();
 			break;
 
 		case 2:
+			system("cls");
 			idx = search_customer();
 			if (idx == -1)
 			{
@@ -108,6 +110,7 @@ int main()
 			break;
 
 		case 3:
+			system("cls");
 			for (i = 0; i < c_idx; i++)
 			{
 				printf("%d, %s, %s, %s, %s\n"
@@ -120,10 +123,12 @@ int main()
 			break;
 
 		case 4:
+			system("cls");
 			new_video();
 			break;
 
 		case 5:
+			system("cls");
 			idx = search_video();
 			if (idx == -1)
 			{
@@ -143,6 +148,7 @@ int main()
 			break;
 
 		case 6:
+			system("cls");
 			for (i = 0; i < v_idx; i++)
 			{
 				printf("%d, %s, %s, %d, %s, %d, %d\n"
@@ -161,35 +167,14 @@ int main()
 			break;
 			
 		case 8:
+			system("cls");
 			return_video();
 			break;
 		case 0:
 			exit(1);
 		}
 		_getch();
-	}
-	
-	for (i = 0; i < c_idx; i++)
-	{
-		printf("%d, %s, %s, %s, %s\n"
-			, customer_info[i].id
-			, customer_info[i].name
-			, customer_info[i].ssn
-			, customer_info[i].phone
-			, customer_info[i].address);
-	}
-
-	for (i = 0; i < v_idx; i++)
-	{
-		printf("%d, %s, %s, %d, %s, %d, %d\n"
-			, video_info[i].id
-			, video_info[i].title
-			, video_info[i].genre
-			, video_info[i].charge
-			, video_info[i].regist_date
-			, video_info[i].is_rented
-			, video_info[i].late_fee);			
-	}
+	}	
 	return 0;
 }
 
@@ -222,7 +207,7 @@ void rent_video()
 {
 	int i, video_id, cust_id;
 	time_t timer;
-	struct tm *t;
+	struct tm * t;
 
 	for (i = 0; i < v_idx; i++)
 	{
@@ -236,7 +221,7 @@ void rent_video()
 				, video_info[i].is_rented
 				, video_info[i].late_fee);
 	}
-	printf("대여할 비디오 번호를 입력하세요: ");
+	printf("대여할 비디오 번호를 입력하세요 : ");
 	scanf("%d", &video_id);
 	video_info[video_id-1].is_rented = 1; //대여 표시
 
@@ -250,7 +235,7 @@ void rent_video()
 			, customer_info[i].address);
 	}
 
-	printf("고객 번호를 입력하세요: ");
+	printf("고객 번호를 입력하세요 : ");
 	scanf("%d", &cust_id);
 
 	rent.id = rent_id++; //대여id
@@ -264,7 +249,8 @@ void rent_video()
 
 	t = localtime(&timer); //시간단위 함수
 
-	printf("%d %d %d %d-%d-%d %d %d\n"
+	system("cls");
+	printf("대여ID : %d | 비디오 번호 : %d | 고객번호 : %d | %d-%d-%d | 대여여부 : %d | 대여료 : %d\n"		
 		, rent.id
 		, rent.video_id
 		, rent.cust_id
@@ -278,7 +264,7 @@ int search_video()
 {
 	int i;
 	char title[30];
-	printf("제목: ");
+	printf("제목 : ");
 	scanf("%s", &title);
 
 	for (i = 0; i < c_idx; i++)
@@ -327,7 +313,7 @@ int search_customer()
 {
 	int i;
 	char phone[30];
-	printf("전화번호: ");
+	printf("전화번호 : ");
 	scanf("%s", &phone);
 
 	for (i = 0; i < c_idx; i++)
@@ -441,6 +427,12 @@ void input_video()
 			case 5: //char regist_date
 				strcpy(video_info[v_idx].regist_date, ptr);
 				break;
+			case 6:  //int is_rented
+                video_info[v_idx].is_rented = atoi(ptr);
+                break;
+            case 7:  //int late_fee
+                video_info[v_idx].late_fee = atoi(ptr);
+                break;
 			}
 			//printf("%s\n", ptr);
 			ptr = strtok(NULL, ",");

@@ -356,23 +356,23 @@ void new_customer()
 //고객정보를 파일에서 입력받는다.
 void input_customer()
 {
-	FILE *c_fp = fopen("customer_info.txt", "r");
-	char line[150];
+	FILE *c_fp = fopen("customer_info.txt", "r"); //파일에 대한 정보를 읽어옴
+	char line[150]; //한 라인씩 읽어옴
 	char *ptr;
 	int word_cnt; //콤마 구분으로 단어를 자름
 
-	while (fscanf(c_fp, "%s", line) > 0)
+	while (fscanf(c_fp, "%s", line) > 0) //읽어온 데이터의 개수를 int형으로 return 하게됨
 	{
 		word_cnt = 0;
 		//printf("%s\n", line);
-		ptr = strtok(line, ",");
+		ptr = strtok(line, ","); //콤마 단위로 구분해서 잘라냄
 		while (ptr != NULL)
 		{
-			word_cnt++;
+			word_cnt++; //1.고객번호 2.고객이름 3.주민등록번호...(순차적으로 증가)
 			switch (word_cnt)
 			{
 			case 1: //int id
-				customer_info[c_idx].id = atoi(ptr);
+				customer_info[c_idx].id = atoi(ptr); //문자열 숫자로 변환
 				break;
 			case 2: //char name
 				strcpy(customer_info[c_idx].name, ptr);
@@ -390,7 +390,7 @@ void input_customer()
 			//printf("%s\n", ptr);
 			ptr = strtok(NULL, ",");
 		}
-		c_idx++;
+		c_idx++; //고객정보 저장된 개수 증가
 	}
 	fclose(c_fp);
 }
@@ -398,12 +398,12 @@ void input_customer()
 //비디오정보를 파일에서 입력받는다.
 void input_video()
 {
-	FILE *v_fp = fopen("video_info.txt", "r");
-	char line[150];
+	FILE *v_fp = fopen("video_info.txt", "r"); //파일에 대한 정보를 읽어옴
+	char line[150]; //한 라인씩 읽어옴
 	char *ptr;
 	int word_cnt; //콤마 구분으로 단어를 자름
 
-	while (fscanf(v_fp, "%s", line) > 0)
+	while (fscanf(v_fp, "%s", line) > 0) //읽어온 데이터의 개수를 int형으로 return 하게됨
 	{
 		word_cnt = 0;
 		//printf("%s\n", line);
@@ -438,7 +438,7 @@ void input_video()
 			//printf("%s\n", ptr);
 			ptr = strtok(NULL, ",");
 		}
-		v_idx++;
+		v_idx++; //비디오정보 저장된 개수 증가
 	}
 	fclose(v_fp);
 }

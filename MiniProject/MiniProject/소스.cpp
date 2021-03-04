@@ -4,16 +4,7 @@
 #include<stdlib.h>
 #include<conio.h>
 #include<time.h>
-/*
-0. 유저 인터페이스 구현
-1. 신규 고객 등록
-2. 고객조회
-3. 신규 비디오 등록
-4. 비디오 조회
-5. 비디오 대여
-6. 비디오 반납
-7. 비디오 연체 처리
-*/
+
 typedef struct _customer {
 	int id; //고객번호
 	char name[20]; //고객이름
@@ -44,14 +35,15 @@ typedef struct _rent_info {
 	int charge; //대여료(대여할 당시의)
 } RENT_INFO; //대여, 반납 정보 구조체
 
-void input_customer();
-void input_video();
-void new_customer();
-int search_customer();
-void new_video();
-int search_video();
-void rent_video();
-void return_video();
+void input_customer(); //고객정보를 파일에서 입력받는다.
+void input_video(); //비디오정보를 파일에서 입력받는다.
+void new_customer(); //신규 고객정보를 입력받아서 파일에 저장
+int search_customer(); //전화번호 검색으로 고객정보를 찾음
+void new_video(); //신규 비디오정보를 입력받아서 파일에 저장
+int search_video(); //비디오 제목 검색으로 고객정보를 찾음
+void rent_video(); //비디오 대여
+void return_video(); //비디오 반납
+void rent_list(); //대여현황
 
 CUSTOMER customer_info[200];
 int c_idx = 0; //고객정보 저장된 개수
@@ -59,6 +51,8 @@ VIDEO video_info[200];
 int v_idx = 0; //비디오정보 저장된 개수
 RENT_INFO rent; //한개의 비디오만 대여/반납
 int rent_id = 1; //대여번호
+int cust_id;
+int video_id;
 
 int main(void)
 {
@@ -67,7 +61,7 @@ int main(void)
 	input_customer(); //고객정보 입력
 	input_video(); //비디오정보 입력
 
-	while(sel!=0)
+	while(sel != 0)
 	{
 		system("cls");
 		printf("┏━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n");
@@ -80,6 +74,7 @@ int main(void)
 		printf("┃6. 전체 비디오 정보 조회  ┃\n");
 		printf("┃7. 대여                   ┃\n");
 		printf("┃8. 반납                   ┃\n");
+		printf("┃9. 대여현황               ┃\n");
 		printf("┃0. 종료                   ┃\n");
 		printf("┗━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n");
 		printf("▶항목을 선택하세요 : ");
@@ -171,10 +166,16 @@ int main(void)
 			system("cls");
 			return_video();
 			break;
+
+		case 9:
+			system("cls");
+			rent_list();
+			break;
+
 		case 0:
 			exit(1);
 		}
-		_getch();
+		_getch(); 
 	}	
 	return 0;
 }
@@ -183,7 +184,7 @@ int main(void)
 void return_video()
 {
 	time_t timer;
-	struct tm * t;
+	struct tm *t;
 	int ret_sec;
 	int late_pay, late_day;
 
@@ -206,9 +207,9 @@ void return_video()
 //비디오 대여
 void rent_video()
 {
-	int i, video_id, cust_id;
+	int i;
 	time_t timer;
-	struct tm * t;
+	struct tm *t;
 
 	for (i = 0; i < v_idx; i++)
 	{
@@ -225,6 +226,7 @@ void rent_video()
 	printf("대여할 비디오 번호를 입력하세요 : ");
 	scanf("%d", &video_id);
 	video_info[video_id-1].is_rented = 1; //대여 표시
+	printf("\n");
 
 	for (i = 0; i < c_idx; i++)
 	{
@@ -235,23 +237,61 @@ void rent_video()
 			, customer_info[i].phone
 			, customer_info[i].address);
 	}
-
 	printf("고객 번호를 입력하세요 : ");
 	scanf("%d", &cust_id);
 
-	rent.id = rent_id++; //대여id
+	rent.id = rent_id; //대여id
 	rent.video_id = video_info[video_id-1].id; //현재 빌려갈 비디오 번호
 	rent.cust_id = cust_id; //고객번호
 	//rent.rent_date = timer = time(NULL); //대여일자(현재 시점으로 초로 환산하여 정수로 나타냄)
 	rent.rent_date = timer = time(NULL) - 691200; //대여일자(테스트를 위해 8일전으로 시간을 조작함)
-	rent.ret_due_date = timer + 604800; //반납 예정일자
+	rent.ret_due_date = timer + 604800; //반납 예정일자(1주일후)
 	rent.is_returned = 0; //1.반납완료, 0.대여중
 	rent.charge = video_info[video_id-1].charge; //대여료
 
 	t = localtime(&timer); //시간단위 함수
 
 	system("cls");
-	printf("대여ID : %d | 비디오 번호 : %d | 고객번호 : %d | %d-%d-%d | 대여여부 : %d | 대여료 : %d\n"		
+	printf("대여ID : %d | 비디오 번호 : %d | 고객번호 : %d | %d-%d-%d | 반납여부 : %d | 대여료 : %d\n"		
+		, rent.id
+		, rent.video_id
+		, rent.cust_id
+		, t->tm_year + 1900, t->tm_mon + 1, t->tm_mday
+		, rent.is_returned
+		, rent.charge);
+
+	FILE *r_fp = fopen("rent_list.txt", "w"); //대여현황 정보 저장
+
+	fprintf(r_fp, "%d, %d, %d, %d-%d-%d, %d, %d"
+		, rent.id
+		, rent.video_id
+		, rent.cust_id
+		, t->tm_year + 1900, t->tm_mon + 1, t->tm_mday
+		, rent.is_returned
+		, rent.charge);
+
+		fclose(r_fp);
+}
+
+void rent_list()
+{
+	int i;
+	time_t timer;
+	struct tm *t;
+
+	rent.id = rent_id; //대여id
+	rent.video_id = video_info[video_id - 1].id; //현재 빌려갈 비디오 번호
+	rent.cust_id = cust_id; //고객번호
+	//rent.rent_date = timer = time(NULL); //대여일자(현재 시점으로 초로 환산하여 정수로 나타냄)
+	rent.rent_date = timer = time(NULL) - 691200; //대여일자(테스트를 위해 8일전으로 시간을 조작함)
+	rent.ret_due_date = timer + 604800; //반납 예정일자(1주일후)
+	rent.is_returned = 0; //1.반납완료, 0.대여중
+	rent.charge = video_info[video_id - 1].charge; //대여료
+
+	t = localtime(&timer); //시간단위 함수
+
+	system("cls");
+	printf("대여ID : %d | 비디오 번호 : %d | 고객번호 : %d | %d-%d-%d | 반납여부 : %d | 대여료 : %d\n"
 		, rent.id
 		, rent.video_id
 		, rent.cust_id
@@ -259,6 +299,7 @@ void rent_video()
 		, rent.is_returned
 		, rent.charge);
 }
+
 
 //비디오 제목 검색으로 고객정보를 찾음
 int search_video()
@@ -268,7 +309,7 @@ int search_video()
 	printf("제목 : ");
 	scanf("%s", &title);
 
-	for (i = 0; i < c_idx; i++)
+	for (i = 0; i < v_idx; i++)
 	{
 		if (strcmp(title, video_info[i].title) == 0)
 			return i;

@@ -5,7 +5,7 @@
 
 ## 개발환경 및 사용버전
 - Visual Studio 2017
-- C Languag
+- C Language
 
 ## 구현내용
 - 신규 고객 등록

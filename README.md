@@ -20,4 +20,4 @@
 <img src="https://user-images.githubusercontent.com/76413580/111266596-1c0bec00-866e-11eb-91ca-e15a5171377b.png"></image>
 
 ## Screenshots
-<img src="https://user-images.githubusercontent.com/76413580/111267155-e9aebe80-866e-11eb-9bf3-3f0f8e7cfe67.PNG" 
+<img src="https://user-images.githubusercontent.com/76413580/111267155-e9aebe80-866e-11eb-9bf3-3f0f8e7cfe67.png" width="22%"></image> 

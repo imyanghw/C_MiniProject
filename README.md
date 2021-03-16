@@ -17,6 +17,6 @@
 - 대여, 반납, 대여현황 조회
 
 ## Dataflow
-<img src="https://user-images.githubusercontent.com/76413580/111264973-c3d3ea80-866b-11eb-806b-88bccb65bbb0.png"></image>
+<img src="https://user-images.githubusercontent.com/76413580/111266596-1c0bec00-866e-11eb-91ca-e15a5171377b.png"></image>
 
 ## Screenshots
